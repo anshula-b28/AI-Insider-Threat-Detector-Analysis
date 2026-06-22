@@ -46,3 +46,9 @@ To set up and run ThreatLens locally on your machine, follow these commands in y
    ```bash
    git clone [https://github.com/YOUR_GITHUB_USERNAME/threat-detector.git](https://github.com/YOUR_GITHUB_USERNAME/threat-detector.git)
    cd threat-detector
+2. **Install the required libraries:**
+   ```bash
+   pip install -r requirements.txt
+3. **Launch the application local server:**
+   ```bash
+   streamlit run app.py
