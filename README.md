@@ -52,3 +52,6 @@ To set up and run ThreatLens locally on your machine, follow these commands in y
 3. **Launch the application local server:**
    ```bash
    streamlit run app.py
+
+## 🔗 Project Link
+https://ai-insider-threat-detector-analysis-28.streamlit.app/
