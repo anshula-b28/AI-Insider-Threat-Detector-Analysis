@@ -47,16 +47,16 @@ st.markdown("""
 def run_insider_threat_ai_engine():
     """Applies a Vector Distance Anomaly Detection Model to track baseline behavioral deviations."""
     raw_logs = pd.DataFrame([
-        {'Employee Name': 'Rahul Kumar', 'Department': 'Finance', 'Time of Activity': '02:31 AM', 'Failed Logins': 0, 'Data Downloaded (MB)': 2300.0, 'Threat Trigger': 'Bulk Data Exfiltration'},
-        {'Employee Name': 'Priya Mehta', 'Department': 'Engineering', 'Time of Activity': '03:08 AM', 'Failed Logins': 1, 'Data Downloaded (MB)': 450.0, 'Threat Trigger': 'Off-hours System Access'},
-        {'Employee Name': 'Arjun Singh', 'Department': 'IT Security', 'Time of Activity': '11:45 AM', 'Failed Logins': 7, 'Data Downloaded (MB)': 1.2, 'Threat Trigger': 'Failed Login Attempts'},
-        {'Employee Name': 'Divya Nair', 'Department': 'HR', 'Time of Activity': '02:44 AM', 'Failed Logins': 0, 'Data Downloaded (MB)': 15.4, 'Threat Trigger': 'Unregistered USB Insertion'},
-        {'Employee Name': 'Amit Patel', 'Department': 'Sales', 'Time of Activity': '03:10 PM', 'Failed Logins': 0, 'Data Downloaded (MB)': 120.0, 'Threat Trigger': 'External Email Forwarding'},
-        {'Employee Name': 'Suresh Babu', 'Department': 'Marketing', 'Time of Activity': '01:15 PM', 'Failed Logins': 0, 'Data Downloaded (MB)': 5.0, 'Threat Trigger': 'Opening Suspicious Websites'},
-        {'Employee Name': 'Vikram Rao', 'Department': 'Operations', 'Time of Activity': '11:02 PM', 'Failed Logins': 0, 'Data Downloaded (MB)': 85.0, 'Threat Trigger': 'Sensitive HR Record Access'},
-        {'Employee Name': 'Lakshmi Pillai', 'Department': 'Legal', 'Time of Activity': '09:30 AM', 'Failed Logins': 0, 'Data Downloaded (MB)': 4.2, 'Threat Trigger': 'None'},
-        {'Employee Name': 'Meera Krishnan', 'Department': 'Finance', 'Time of Activity': '09:10 AM', 'Failed Logins': 0, 'Data Downloaded (MB)': 11.0, 'Threat Trigger': 'None'},
-        {'Employee Name': 'Ravi Nair', 'Department': 'IT Security', 'Time of Activity': '05:12 AM', 'Failed Logins': 1, 'Data Downloaded (MB)': 28.0, 'Threat Trigger': 'None'}
+        {'Employee Name': 'James R', 'Department': 'Finance', 'Time of Activity': '02:31 AM', 'Failed Logins': 0, 'Data Downloaded (MB)': 2300.0, 'Threat Trigger': 'Bulk Data Exfiltration'},
+        {'Employee Name': 'Kayla', 'Department': 'Engineering', 'Time of Activity': '03:08 AM', 'Failed Logins': 1, 'Data Downloaded (MB)': 450.0, 'Threat Trigger': 'Off-hours System Access'},
+        {'Employee Name': 'Yumi', 'Department': 'IT Security', 'Time of Activity': '11:45 AM', 'Failed Logins': 7, 'Data Downloaded (MB)': 1.2, 'Threat Trigger': 'Failed Login Attempts'},
+        {'Employee Name': 'Ankita', 'Department': 'HR', 'Time of Activity': '02:44 AM', 'Failed Logins': 0, 'Data Downloaded (MB)': 15.4, 'Threat Trigger': 'Unregistered USB Insertion'},
+        {'Employee Name': 'Lily', 'Department': 'Sales', 'Time of Activity': '03:10 PM', 'Failed Logins': 0, 'Data Downloaded (MB)': 120.0, 'Threat Trigger': 'External Email Forwarding'},
+        {'Employee Name': 'Jenna', 'Department': 'Marketing', 'Time of Activity': '01:15 PM', 'Failed Logins': 0, 'Data Downloaded (MB)': 5.0, 'Threat Trigger': 'Opening Suspicious Websites'},
+        {'Employee Name': 'John', 'Department': 'Operations', 'Time of Activity': '11:02 PM', 'Failed Logins': 0, 'Data Downloaded (MB)': 85.0, 'Threat Trigger': 'Sensitive HR Record Access'},
+        {'Employee Name': 'Mary', 'Department': 'Legal', 'Time of Activity': '09:30 AM', 'Failed Logins': 0, 'Data Downloaded (MB)': 4.2, 'Threat Trigger': 'None'},
+        {'Employee Name': 'Kate', 'Department': 'Finance', 'Time of Activity': '09:10 AM', 'Failed Logins': 0, 'Data Downloaded (MB)': 11.0, 'Threat Trigger': 'None'},
+        {'Employee Name': 'Reyna', 'Department': 'IT Security', 'Time of Activity': '05:12 AM', 'Failed Logins': 1, 'Data Downloaded (MB)': 28.0, 'Threat Trigger': 'None'}
     ])
     
     logins_vec = raw_logs['Failed Logins'].values
