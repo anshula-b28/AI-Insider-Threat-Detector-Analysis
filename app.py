@@ -94,7 +94,6 @@ with st.sidebar:
         options=["🖥️ Executive Dashboard", "👥 Employee Footprints", "🔬 Deep Behavioral Risk", "🚨 Core Security Alerts", "📈 Audit & Compliance"]
     )
     
-    st.markdown("<br><br>" * 2)
     st.markdown("---")
     st.markdown("### ⚙️ SYSTEM STATE")
     st.caption("Engine: Vector Density Cluster v1.6")
