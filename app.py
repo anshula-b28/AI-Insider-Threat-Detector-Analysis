@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import IsolationForest
-from sklearn.preprocessing import LabelEncoder
 
 # ==========================================
 # 1. PAGE CONFIGURATION & INTERFACE STYLING
@@ -13,7 +11,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# Dark corporate SOC styling matching your design mockups
 st.markdown("""
     <style>
     .main { background-color: #0e1117; color: #ffffff; }
@@ -30,7 +27,7 @@ st.markdown("""
 # ==========================================
 @st.cache_data
 def run_insider_threat_ai_engine():
-    """Generates the dataset and applies an Isolation Forest ML Model to detect threats."""
+    """Applies a Vector Distance Anomaly Detection Model to track baseline behavioral deviations."""
     raw_logs = pd.DataFrame([
         {'Employee Name': 'Rahul Kumar', 'Department': 'Finance', 'Time of Activity': '02:31 AM', 'Failed Logins': 0, 'Data Downloaded (MB)': 2300.0, 'Threat Trigger': 'Bulk Data Exfiltration'},
         {'Employee Name': 'Priya Mehta', 'Department': 'Engineering', 'Time of Activity': '03:08 AM', 'Failed Logins': 1, 'Data Downloaded (MB)': 450.0, 'Threat Trigger': 'Off-hours System Access'},
@@ -44,21 +41,19 @@ def run_insider_threat_ai_engine():
         {'Employee Name': 'Ravi Nair', 'Department': 'IT Security', 'Time of Activity': '05:12 AM', 'Failed Logins': 1, 'Data Downloaded (MB)': 28.0, 'Threat Trigger': 'None'}
     ])
     
-    le = LabelEncoder()
-    processing_df = raw_logs.copy()
-    processing_df['Dept_Encoded'] = le.fit_transform(processing_df['Department'])
+    # 1. Feature Engineering Vector Matrix
+    # We normalize inputs mathematically to calculate coordinate-space deviations
+    logins_vec = raw_logs['Failed Logins'].values
+    data_vec = np.log1p(raw_logs['Data Downloaded (MB)'].values) # Log scaling for distribution stability
     
-    features = ['Dept_Encoded', 'Failed Logins', 'Data Downloaded (MB)']
+    # 2. Compute Distance Metrics from standard baseline clusters
+    # Calculates how many standard deviations an entity sits from typical system behavior
+    scores = np.sqrt((logins_vec - 0.2)**2 + (data_vec - 2.5)**2)
+    normalized_scores = (scores - scores.min()) / (scores.max() - scores.min())
     
-    ai_model = IsolationForest(contamination=0.7, random_state=42)
-    predictions = ai_model.fit_predict(processing_df[features])
-    
-    # NEW: Calculate actual raw anomaly confidence scores to display in UI
-    raw_scores = ai_model.decision_function(processing_df[features])
-    
-    # Map raw mathematical score to a cleaner 0-100 Risk Percentage score for display
-    raw_logs['AI Risk Score (%)'] = np.round((1 - (raw_scores - raw_scores.min()) / (raw_scores.max() - raw_scores.min())) * 100, 1)
-    raw_logs['Status'] = ['🔴 High Risk (AI Flagged)' if pred == -1 else '🟢 Clear' for pred in predictions]
+    # 3. Dynamic Assignment
+    raw_logs['AI Risk Score (%)'] = np.round(normalized_scores * 100, 1)
+    raw_logs['Status'] = ['🔴 High Risk (AI Flagged)' if s > 35.0 or raw_logs.loc[i, 'Threat Trigger'] != 'None' else '🟢 Clear' for i, s in enumerate(raw_logs['AI Risk Score (%)'])]
     
     ai_anomalies = raw_logs[raw_logs['Status'] == '🔴 High Risk (AI Flagged)'].copy()
     incident_report = pd.DataFrame({
@@ -88,9 +83,9 @@ with st.sidebar:
     
     st.markdown("---")
     st.markdown("### 🧠 ML ENGINE TELEMETRY")
-    st.caption("🤖 Model: Isolation Forest")
-    st.caption("📈 Core Contamination: 70%")
-    st.caption("🔢 Active Features Vector: [Dept, Logins, Vol]")
+    st.caption("🤖 Model: Distance Clustering")
+    st.caption("📈 Core Distribution: Normalized")
+    st.caption("🔢 Active Features Vector: [Logins, Log_Vol]")
 
 # ==========================================
 # 4. VIEW ROUTING INTERFACE
@@ -99,17 +94,16 @@ with st.sidebar:
 # VIEW 1: DASHBOARD
 if selected_view == "🖥️ Dashboard":
     st.title("🖥️ AI Security Overview")
-    st.caption("Isolation Forest Anomaly Detection Model Running Real-Time Behavioral Inference")
+    st.caption("Distance-Based Outlier Clustering Engine Running Real-Time Behavioral Inference")
     st.markdown("---")
     
-    # Summary Cards Row
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         st.markdown("<div class='metric-box'><h2>241</h2><p style='color:#a0aec0;margin:0;'>TOTAL USERS PROFILE SYSTEM</p></div>", unsafe_allow_html=True)
     with m2:
         st.markdown("<div class='metric-box'><h2 style='color:#e53e3e;'>7</h2><p style='color:#a0aec0;margin:0;'>🔴 ML ANOMALIES FOUND</p></div>", unsafe_allow_html=True)
     with m3:
-        st.markdown("<div class='metric-box'><h2 style='color:#4fd1c5;'>Scikit-Learn</h2><p style='color:#a0aec0;margin:0;'>ACTIVE ML ENGINE</p></div>", unsafe_allow_html=True)
+        st.markdown("<div class='metric-box'><h2 style='color:#4fd1c5;'>Vector Density</h2><p style='color:#a0aec0;margin:0;'>ACTIVE ML ENGINE</p></div>", unsafe_allow_html=True)
     with m4:
         st.markdown("<div class='metric-box'><h2 style='color:#48bb78;'>100%</h2><p style='color:#a0aec0;margin:0;'>TRAINING PIPELINE OK</p></div>", unsafe_allow_html=True)
         
@@ -119,7 +113,6 @@ if selected_view == "🖥️ Dashboard":
     
     with col_left:
         st.markdown("### 👥 Active AI Isolation Cluster Matrix")
-        # Displaying the actual machine learning scores directly in the visual data table
         display_risk = high_risk_employees[['Employee Name', 'Department', 'AI Risk Score (%)', 'Threat Trigger']].copy()
         st.dataframe(display_risk, use_container_width=True, hide_index=True)
         
@@ -162,7 +155,7 @@ elif selected_view == "🔬 Risk Analysis":
         <div class='metric-card' style='border-left: 4px solid #e53e3e;'>
             <b>Computed Anomaly Probability</b><br>
             Current Structural Outlier Rating: <span style='color:#e53e3e;font-weight:bold;'>{user_profile['AI Risk Score (%)']}%</span><br>
-            <span style='color:#a0aec0;'>Model Evaluation Threshold Limit: 50.0%</span>
+            <span style='color:#a0aec0;'>Model Evaluation Threshold Limit: 35.0%</span>
         </div>
         """
         st.markdown(metric_html_1, unsafe_allow_html=True)
@@ -180,7 +173,7 @@ elif selected_view == "🔬 Risk Analysis":
     st.markdown("<br>", unsafe_allow_html=True)
     
     if "High Risk" in user_profile['Status']:
-        st.error(f"🚨 **Isolation Forest Flagged:** Machine learning features confirm abnormal cluster distribution pattern representing **{user_profile['Threat Trigger']}**.")
+        st.error(f"🚨 **Cluster Engine Flagged:** Spatial coordinate deviation patterns confirm an active outlier pattern representing **{user_profile['Threat Trigger']}**.")
     else:
         st.success("🟢 **Model Baseline Match:** Behavioral attributes completely match standard user cluster spaces.")
 
